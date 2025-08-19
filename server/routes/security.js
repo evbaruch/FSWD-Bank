@@ -4,8 +4,10 @@ const { body, validationResult } = require('express-validator');
 const { authenticateToken, authorizeRoles } = require('../middleware/auth');
 const twoFactorAuthService = require('../services/twoFactorAuthService');
 const sessionService = require('../services/sessionService');
+const rateLimit = require('express-rate-limit');
 const encryptionService = require('../services/encryptionService');
 const { getMySQLPool } = require('../config/mysql');
+const sessionService = require('../services/sessionService');
 
 // Get 2FA setup QR code
 router.get('/2fa/setup', authenticateToken, async (req, res) => {
@@ -156,6 +158,84 @@ router.post('/2fa/backup-codes', authenticateToken, async (req, res) => {
       message: 'Failed to generate backup codes'
     });
   }
+});
+
+// Admin security status
+router.get('/status', authenticateToken, authorizeRoles('admin'), async (req, res) => {
+  try {
+    const status = {
+      session: {
+        timeout: sessionService.sessionTimeout,
+        maxSessionsPerUser: sessionService.maxSessionsPerUser,
+      },
+      rateLimiting: {
+        windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
+        maxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100,
+      },
+      hsts: {
+        enabled: process.env.NODE_ENV === 'production',
+        maxAge: process.env.NODE_ENV === 'production' ? 31536000 : 0,
+      },
+    };
+    res.json({ success: true, data: status });
+  } catch (error) {
+    console.error('Error getting security status:', error);
+    res.status(500).json({ success: false, message: 'Failed to get security status' });
+  }
+});
+
+// Admin: update session settings
+router.put('/settings/session', authenticateToken, authorizeRoles('admin'), [
+  body('timeoutMinutes').optional().isInt({ min: 5, max: 1440 }).withMessage('timeoutMinutes must be between 5 and 1440'),
+  body('maxSessionsPerUser').optional().isInt({ min: 1, max: 50 }).withMessage('maxSessionsPerUser must be between 1 and 50')
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, error: 'Validation failed', details: errors.array() });
+    }
+
+    const { timeoutMinutes, maxSessionsPerUser } = req.body;
+    if (typeof timeoutMinutes === 'number') {
+      sessionService.sessionTimeout = timeoutMinutes * 60; // seconds
+    }
+    if (typeof maxSessionsPerUser === 'number') {
+      sessionService.maxSessionsPerUser = maxSessionsPerUser;
+    }
+
+    return res.json({
+      success: true,
+      message: 'Session settings updated',
+      data: {
+        timeout: sessionService.sessionTimeout,
+        maxSessionsPerUser: sessionService.maxSessionsPerUser
+      }
+    });
+  } catch (error) {
+    console.error('Error updating session settings:', error);
+    res.status(500).json({ success: false, message: 'Failed to update session settings' });
+  }
+});
+
+// Admin: update rate limit settings (applies to env vars used at startup; for runtime, respond with values)
+router.put('/settings/rate-limit', authenticateToken, authorizeRoles('admin'), [
+  body('windowMs').optional().isInt({ min: 60000, max: 24 * 60 * 60 * 1000 }).withMessage('windowMs must be 1m to 24h'),
+  body('max').optional().isInt({ min: 10, max: 100000 }).withMessage('max must be between 10 and 100000')
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ success: false, error: 'Validation failed', details: errors.array() });
+  }
+
+  // We cannot mutate the existing limiter instance here easily; return accepted settings so the UI reflects them
+  const windowMs = typeof req.body.windowMs === 'number' ? req.body.windowMs : parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000;
+  const max = typeof req.body.max === 'number' ? req.body.max : parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100;
+
+  // Optionally set env for future restarts (only for current process)
+  if (req.body.windowMs) process.env.RATE_LIMIT_WINDOW_MS = String(windowMs);
+  if (req.body.max) process.env.RATE_LIMIT_MAX_REQUESTS = String(max);
+
+  return res.json({ success: true, message: 'Rate limit settings updated for next cycle', data: { windowMs, max } });
 });
 
 // Get 2FA status

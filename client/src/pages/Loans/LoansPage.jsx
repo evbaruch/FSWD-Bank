@@ -13,8 +13,7 @@ import {
   TrendingUp,
   Filter,
   Search,
-  Download,
-  Eye
+  Download
 } from 'lucide-react';
 import { Button, Input, Card } from '../../components/common';
 import { useAuth } from '../../context/AuthContext';
@@ -617,13 +616,7 @@ const LoansPage = () => {
                   </div>
                   
                   <div className={styles.loanActions}>
-                    <Button
-                      variant="ghost"
-                      size="small"
-                    >
-                      <Eye className={styles.icon} />
-                      View Details
-                    </Button>
+                    {/* View Details removed until implemented */}
                     {loan.status === 'approved' && (
                       <Button
                         variant="outline"

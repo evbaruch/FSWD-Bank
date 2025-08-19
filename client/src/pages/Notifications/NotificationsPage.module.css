@@ -1,0 +1,54 @@
+.container {
+  padding: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 1.5rem;
+}
+
+.filtersCard {
+  margin-bottom: 1rem;
+}
+
+.filtersContent {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.searchSection { flex: 1; }
+.filterSection { min-width: 200px; }
+.filterSelect { width: 100%; padding: 0.5rem; }
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.notificationCard { padding: 1rem; }
+.notificationHeader { display: flex; justify-content: space-between; gap: 1rem; }
+.notificationTitle { font-weight: 600; }
+.notificationMeta { color: #718096; font-size: 0.875rem; }
+.notificationBody { margin: 0.5rem 0; }
+.notificationFooter { display: flex; justify-content: space-between; align-items: center; }
+
+.badge { padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem; }
+.default { background: #e2e8f0; color: #2d3748; }
+.transactioncompleted { background: #ebf8ff; color: #2b6cb0; }
+.transfercompleted { background: #edf2f7; color: #2c5282; }
+.loanapplicationsubmitted { background: #faf5ff; color: #6b46c1; }
+.loanapproved { background: #c6f6d5; color: #22543d; }
+.loanrejected { background: #fed7d7; color: #742a2a; }
+.securityalert { background: #fff5f5; color: #c53030; }
+
+.emptyCard { text-align: center; }
+.emptyState h3 { margin: 0.5rem 0; }
+
+.loadingContainer { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; min-height: 200px; justify-content: center; }
+.loadingSpinner { width: 32px; height: 32px; border: 3px solid #e2e8f0; border-top: 3px solid #3182ce; border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
