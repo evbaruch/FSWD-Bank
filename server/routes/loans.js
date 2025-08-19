@@ -336,28 +336,26 @@ router.put(
         });
       }
 
-      const updateData = {
-        status: statusData.status,
-        notes: statusData.reason || null,
-      };
-
+      // Update status and approved_at (only when approved). 'notes' column may not exist in schema; omit it.
       if (statusData.status === "approved") {
-        updateData.approved_at = new Date();
+        await pool.execute(
+          `
+          UPDATE loans 
+          SET status = 'approved', approved_at = NOW(), updated_at = NOW()
+          WHERE id = ?
+        `,
+          [req.params.loanId]
+        );
+      } else {
+        await pool.execute(
+          `
+          UPDATE loans 
+          SET status = 'rejected', updated_at = NOW()
+          WHERE id = ?
+        `,
+          [req.params.loanId]
+        );
       }
-
-      await pool.execute(
-        `
-      UPDATE loans 
-      SET status = ?, notes = ?, approved_at = ?, updated_at = NOW()
-      WHERE id = ?
-    `,
-        [
-          updateData.status,
-          updateData.notes,
-          updateData.approved_at,
-          req.params.loanId,
-        ]
-      );
 
       // Create notification for the user
       const notificationMessage =
