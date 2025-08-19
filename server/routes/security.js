@@ -4,10 +4,9 @@ const { body, validationResult } = require('express-validator');
 const { authenticateToken, authorizeRoles } = require('../middleware/auth');
 const twoFactorAuthService = require('../services/twoFactorAuthService');
 const sessionService = require('../services/sessionService');
-const rateLimit = require('express-rate-limit');
 const encryptionService = require('../services/encryptionService');
 const { getMySQLPool } = require('../config/mysql');
-const sessionService = require('../services/sessionService');
+// sessionService already required above
 
 // Get 2FA setup QR code
 router.get('/2fa/setup', authenticateToken, async (req, res) => {
