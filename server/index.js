@@ -365,33 +365,7 @@ app.get("/health", (req, res) => {
   });
 });
 
-// Security status endpoint (admin only)
-app.get("/security/status", authenticateToken, (req, res) => {
-  if (req.user.role !== "admin") {
-    return res.status(403).json({
-      success: false,
-      message: "Access denied",
-    });
-  }
-
-  res.json({
-    success: true,
-    data: {
-      session: {
-        timeout: sessionService.sessionTimeout,
-        maxSessionsPerUser: sessionService.maxSessionsPerUser,
-      },
-      rateLimiting: {
-        windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
-        maxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100,
-      },
-      hsts: {
-        enabled: process.env.NODE_ENV === "production",
-        maxAge: process.env.NODE_ENV === "production" ? 31536000 : 0,
-      },
-    },
-  });
-});
+// Security status handled via /api/security routes
 
 // Root endpoint - redirect to frontend or show API info
 app.get("/", (req, res) => {

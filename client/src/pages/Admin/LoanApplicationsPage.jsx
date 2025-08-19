@@ -394,6 +394,7 @@ const LoanApplicationsPage = () => {
   return (
     <div className={styles.container}>
       {headerView}
+      {errorView}
       {/* Filters and list are already pre-structured above; we are returning the same tree */}
       <Card className={styles.filtersCard}>
         <div className={styles.filtersContent}>

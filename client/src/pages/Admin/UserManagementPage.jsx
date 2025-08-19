@@ -279,142 +279,102 @@ const UserManagementPage = () => {
     );
   }
 
-  return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <h1>User Management</h1>
-        <p>Manage user accounts and permissions</p>
+  const headerView = (
+    <div className={styles.header}>
+      <h1>User Management</h1>
+      <p>Manage user accounts and permissions</p>
+    </div>
+  );
+
+  const filtersView = (
+    <Card className={styles.filters}>
+      <div className={styles.filterRow}>
+        <div className={styles.filterGroup}>
+          <label>Status:</label>
+          <select
+            value={filters.status}
+            onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+          >
+            <option value="">All Statuses</option>
+            <option value="active">Active</option>
+            <option value="pending">Pending</option>
+            <option value="suspended">Suspended</option>
+            <option value="closed">Closed</option>
+          </select>
+        </div>
+        <div className={styles.filterGroup}>
+          <label>Role:</label>
+          <select
+            value={filters.role}
+            onChange={(e) => setFilters({ ...filters, role: e.target.value })}
+          >
+            <option value="">All Roles</option>
+            <option value="customer">Customer</option>
+            <option value="manager">Manager</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <div className={styles.filterGroup}>
+          <label>Search:</label>
+          <input
+            type="text"
+            placeholder="Search by name or email..."
+            value={filters.search}
+            onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+          />
+        </div>
       </div>
+    </Card>
+  );
 
-      {/* Filters */}
-      <Card className={styles.filters}>
-        <div className={styles.filterRow}>
-          <div className={styles.filterGroup}>
-            <label>Status:</label>
-            <select
-              value={filters.status}
-              onChange={(e) =>
-                setFilters({ ...filters, status: e.target.value })
-              }
-            >
-              <option value="">All Statuses</option>
-              <option value="active">Active</option>
-              <option value="pending">Pending</option>
-              <option value="suspended">Suspended</option>
-              <option value="closed">Closed</option>
-            </select>
-          </div>
-
-          <div className={styles.filterGroup}>
-            <label>Role:</label>
-            <select
-              value={filters.role}
-              onChange={(e) => setFilters({ ...filters, role: e.target.value })}
-            >
-              <option value="">All Roles</option>
-              <option value="customer">Customer</option>
-              <option value="manager">Manager</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
-
-          <div className={styles.filterGroup}>
-            <label>Search:</label>
-            <input
-              type="text"
-              placeholder="Search by name or email..."
-              value={filters.search}
-              onChange={(e) =>
-                setFilters({ ...filters, search: e.target.value })
-              }
-            />
-          </div>
-        </div>
-      </Card>
-
-      {/* Users List */}
-      <Card className={styles.usersSection}>
-        <div className={styles.sectionHeader}>
-          <h2>Users ({filteredUsers.length})</h2>
-          <Button onClick={loadUsers} variant="outline">
-            Refresh
-          </Button>
-        </div>
-
-        {filteredUsers.length > 0 ? (
-          <div className={styles.usersGrid}>
-            {filteredUsers.map((user) => (
-              <div key={user.id} className={styles.userCard}>
-                <div className={styles.userHeader}>
-                  <div className={styles.userInfo}>
-                    <h3>
-                      {user.firstName} {user.lastName}
-                    </h3>
-                    <p>{user.email}</p>
-                    <div className={styles.userMeta}>
-                      <span
-                        className={`${styles.status} ${styles[getStatusColor(user.status)]}`}
-                      >
-                        {user.status}
-                      </span>
-                      <span className={styles.role}>{user.role}</span>
-                    </div>
-                  </div>
-                  <div className={styles.userActions}>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => {
-                        setSelectedUser(user);
-                        setShowStatusModal(true);
-                      }}
-                    >
-                      Change Status
-                    </Button>
-                    {user.role !== "admin" && (
-                      <Button
-                        size="sm"
-                        variant="danger"
-                        onClick={() => {
-                          setSelectedUser(user);
-                          setShowDeleteModal(true);
-                        }}
-                      >
-                        Delete
-                      </Button>
-                    )}
+  const usersListView = (
+    <Card className={styles.usersSection}>
+      <div className={styles.sectionHeader}>
+        <h2>Users ({filteredUsers.length})</h2>
+        <Button onClick={loadUsers} variant="outline">Refresh</Button>
+      </div>
+      {filteredUsers.length > 0 ? (
+        <div className={styles.usersGrid}>
+          {filteredUsers.map((user) => (
+            <div key={user.id} className={styles.userCard}>
+              <div className={styles.userHeader}>
+                <div className={styles.userInfo}>
+                  <h3>{user.firstName} {user.lastName}</h3>
+                  <p>{user.email}</p>
+                  <div className={styles.userMeta}>
+                    <span className={`${styles.status} ${styles[getStatusColor(user.status)]}`}>{user.status}</span>
+                    <span className={styles.role}>{user.role}</span>
                   </div>
                 </div>
-                <div className={styles.userDetails}>
-                  <div className={styles.detailItem}>
-                    <span>ID:</span>
-                    <span>{user.id}</span>
-                  </div>
-                  <div className={styles.detailItem}>
-                    <span>Created:</span>
-                    <span>{formatDate(user.createdAt)}</span>
-                  </div>
-                  {user.lastLoginAt && (
-                    <div className={styles.detailItem}>
-                      <span>Last Login:</span>
-                      <span>{formatDate(user.lastLoginAt)}</span>
-                    </div>
+                <div className={styles.userActions}>
+                  <Button size="sm" variant="outline" onClick={() => { setSelectedUser(user); setShowStatusModal(true); }}>Change Status</Button>
+                  {user.role !== 'admin' && (
+                    <Button size="sm" variant="danger" onClick={() => { setSelectedUser(user); setShowDeleteModal(true); }}>Delete</Button>
                   )}
                 </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className={styles.emptyState}>
-            <p>No users found matching your criteria.</p>
-            <Button
-              onClick={() => setFilters({ status: "", role: "", search: "" })}
-            >
-              Clear Filters
-            </Button>
-          </div>
-        )}
-      </Card>
+              <div className={styles.userDetails}>
+                <div className={styles.detailItem}><span>ID:</span><span>{user.id}</span></div>
+                <div className={styles.detailItem}><span>Created:</span><span>{formatDate(user.createdAt)}</span></div>
+                {user.lastLoginAt && (<div className={styles.detailItem}><span>Last Login:</span><span>{formatDate(user.lastLoginAt)}</span></div>)}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className={styles.emptyState}>
+          <p>No users found matching your criteria.</p>
+          <Button onClick={() => setFilters({ status: '', role: '', search: '' })}>Clear Filters</Button>
+        </div>
+      )}
+    </Card>
+  );
+
+  return (
+    <div className={styles.container}>
+      {headerView}
+      {filtersView}
+      {usersListView}
 
       {/* Status Update Modal */}
       {showStatusModal && selectedUser && (
