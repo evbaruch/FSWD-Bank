@@ -35,7 +35,7 @@ const LoanApplicationsPage = () => {
 
       // Step 1: Try direct API call to see raw response
       console.log("[LOAN-APPLICATIONS] === DIRECT API CALL ===");
-      const directResponse = await authService.api.get("/loans");
+      const directResponse = await authService.api.get("/loans", { headers: { 'x-encrypted': 'true' } });
       console.log(
         "[LOAN-APPLICATIONS] Direct API raw response:",
         directResponse
@@ -119,18 +119,10 @@ const LoanApplicationsPage = () => {
         }
       }
       // Fallback to direct API response with nested structure
-      else if (
-        directResponse?.data?.success &&
-        directResponse?.data?.data?.success &&
-        directResponse?.data?.data?.data
-      ) {
-        console.log(
-          "[LOAN-APPLICATIONS] Method 6: Direct API nested success structure"
-        );
-        if (Array.isArray(directResponse.data.data.data)) {
-          loanData = directResponse.data.data.data;
-          extractionMethod = "direct_api_nested_success";
-        }
+      else if (directResponse?.data?.success && Array.isArray(directResponse?.data?.data)) {
+        console.log("[LOAN-APPLICATIONS] Method 6: Direct API success+data array");
+        loanData = directResponse.data.data;
+        extractionMethod = "direct_api_success_data";
       }
       // Fallback to direct API response with single nested data
       else if (
@@ -375,39 +367,44 @@ const LoanApplicationsPage = () => {
     return loanApplications.filter((loan) => loan.status === "pending").length;
   };
 
+  const loadingView = (
+    <div className={styles.loadingContainer}>
+      <div className={styles.loadingSpinner}></div>
+      <p>Loading loan applications...</p>
+    </div>
+  );
+
   if (loading) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.loadingContainer}>
-          <div className={styles.loadingSpinner}></div>
-          <p>Loading loan applications...</p>
-        </div>
-      </div>
-    );
+    return <div className={styles.container}>{loadingView}</div>;
   }
+
+  const headerView = (
+    <div className={styles.header}>
+      <h1>Loan Applications</h1>
+      <p>Review and manage loan applications from users</p>
+    </div>
+  );
+
+  const errorView = error ? (
+    <Card
+      style={{
+        marginBottom: "1rem",
+        padding: "1rem",
+        backgroundColor: "#fee2e2",
+        borderColor: "#fecaca",
+      }}
+    >
+      <h4 style={{ color: "#991b1b", margin: "0 0 0.5rem 0" }}>❌ Error</h4>
+      <p style={{ color: "#991b1b", margin: 0 }}>{error}</p>
+    </Card>
+  ) : null;
+
+  // Removed inline return block; content rebuilt in final return below
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <h1>Loan Applications</h1>
-        <p>Review and manage loan applications from users</p>
-      </div>
-
-      {error && (
-        <Card
-          style={{
-            marginBottom: "1rem",
-            padding: "1rem",
-            backgroundColor: "#fee2e2",
-            borderColor: "#fecaca",
-          }}
-        >
-          <h4 style={{ color: "#991b1b", margin: "0 0 0.5rem 0" }}>❌ Error</h4>
-          <p style={{ color: "#991b1b", margin: 0 }}>{error}</p>
-        </Card>
-      )}
-
-      {/* Rest of the component remains the same */}
+      {headerView}
+      {/* Filters and list are already pre-structured above; we are returning the same tree */}
       <Card className={styles.filtersCard}>
         <div className={styles.filtersContent}>
           <div className={styles.searchSection}>

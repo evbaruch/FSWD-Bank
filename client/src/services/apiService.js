@@ -145,7 +145,8 @@ export const apiService = {
   // Loan-related API calls
   loans: {
     getAll: async (params = {}) => {
-      const response = await api.get('/loans', { params });
+      // Fetch current user's loans from /loans/my-loans
+      const response = await api.get('/loans/my-loans', { params });
       return response.data;
     },
 
