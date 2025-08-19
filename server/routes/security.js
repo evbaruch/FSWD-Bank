@@ -6,6 +6,7 @@ const twoFactorAuthService = require('../services/twoFactorAuthService');
 const sessionService = require('../services/sessionService');
 const encryptionService = require('../services/encryptionService');
 const { getMySQLPool } = require('../config/mysql');
+const sessionService = require('../services/sessionService');
 
 // Get 2FA setup QR code
 router.get('/2fa/setup', authenticateToken, async (req, res) => {
@@ -155,6 +156,63 @@ router.post('/2fa/backup-codes', authenticateToken, async (req, res) => {
       success: false,
       message: 'Failed to generate backup codes'
     });
+  }
+});
+
+// Admin security status
+router.get('/status', authenticateToken, authorizeRoles('admin'), async (req, res) => {
+  try {
+    const status = {
+      session: {
+        timeout: sessionService.sessionTimeout,
+        maxSessionsPerUser: sessionService.maxSessionsPerUser,
+      },
+      rateLimiting: {
+        windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
+        maxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100,
+      },
+      hsts: {
+        enabled: process.env.NODE_ENV === 'production',
+        maxAge: process.env.NODE_ENV === 'production' ? 31536000 : 0,
+      },
+    };
+    res.json({ success: true, data: status });
+  } catch (error) {
+    console.error('Error getting security status:', error);
+    res.status(500).json({ success: false, message: 'Failed to get security status' });
+  }
+});
+
+// Admin: update session settings
+router.put('/settings/session', authenticateToken, authorizeRoles('admin'), [
+  body('timeoutMinutes').optional().isInt({ min: 5, max: 1440 }).withMessage('timeoutMinutes must be between 5 and 1440'),
+  body('maxSessionsPerUser').optional().isInt({ min: 1, max: 50 }).withMessage('maxSessionsPerUser must be between 1 and 50')
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, error: 'Validation failed', details: errors.array() });
+    }
+
+    const { timeoutMinutes, maxSessionsPerUser } = req.body;
+    if (typeof timeoutMinutes === 'number') {
+      sessionService.sessionTimeout = timeoutMinutes * 60; // seconds
+    }
+    if (typeof maxSessionsPerUser === 'number') {
+      sessionService.maxSessionsPerUser = maxSessionsPerUser;
+    }
+
+    return res.json({
+      success: true,
+      message: 'Session settings updated',
+      data: {
+        timeout: sessionService.sessionTimeout,
+        maxSessionsPerUser: sessionService.maxSessionsPerUser
+      }
+    });
+  } catch (error) {
+    console.error('Error updating session settings:', error);
+    res.status(500).json({ success: false, message: 'Failed to update session settings' });
   }
 });
 

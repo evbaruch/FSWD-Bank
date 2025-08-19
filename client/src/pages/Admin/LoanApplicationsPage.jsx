@@ -18,9 +18,7 @@ const LoanApplicationsPage = () => {
   const [showRejectionModal, setShowRejectionModal] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
 
-  const { execute: fetchLoanApplications } = useApiOperation(
-    "fetch loan applications"
-  );
+  const { execute: fetchLoanApplications } = useApiOperation("fetch loan applications");
   const { execute: updateLoanStatus } = useApiOperation("update loan status");
 
   useEffect(() => {
@@ -33,9 +31,8 @@ const LoanApplicationsPage = () => {
       setError(null);
       console.log("[LOAN-APPLICATIONS] Starting to load loan applications");
 
-      // Step 1: Try direct API call to see raw response
-      console.log("[LOAN-APPLICATIONS] === DIRECT API CALL ===");
-      const directResponse = await authService.api.get("/loans", { headers: { 'x-encrypted': 'true' } });
+      // Use service call (interceptors handle encryption/decryption)
+      const directResponse = await authService.getLoanApplications();
       console.log(
         "[LOAN-APPLICATIONS] Direct API raw response:",
         directResponse
@@ -49,9 +46,7 @@ const LoanApplicationsPage = () => {
         directResponse.headers
       );
 
-      // Step 2: Try authService method
-      console.log("[LOAN-APPLICATIONS] === AUTH SERVICE CALL ===");
-      const authServiceResponse = await authService.getLoanApplications();
+      const authServiceResponse = directResponse;
       console.log(
         "[LOAN-APPLICATIONS] AuthService raw response:",
         authServiceResponse
