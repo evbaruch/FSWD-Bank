@@ -157,6 +157,56 @@ const SecurityPage = () => {
             }}
           />
         </div>
+        <div className={styles.detailItem}>
+          <span>Rate Limit - Window (minutes)</span>
+          <Input
+            type="number"
+            min={1}
+            max={1440}
+            defaultValue={Math.round((securityStats?.rateLimiting?.windowMs || 900000) / 60000)}
+            onBlur={async (e) => {
+              const windowMinutes = parseInt(e.target.value, 10);
+              if (Number.isNaN(windowMinutes)) return;
+              try {
+                const res = await updateSessionSettings(() => authService.api.put('/security/settings/rate-limit', { windowMs: windowMinutes * 60 * 1000 }));
+                const payload = res?.data || res;
+                if (payload?.success) {
+                  toast.success('Rate limit window updated');
+                  setSecurityStats((prev) => ({ ...prev, rateLimiting: { ...prev.rateLimiting, windowMs: payload.data.windowMs } }));
+                } else {
+                  toast.error(payload?.message || 'Failed to update');
+                }
+              } catch (err) {
+                toast.error('Failed to update');
+              }
+            }}
+          />
+        </div>
+        <div className={styles.detailItem}>
+          <span>Rate Limit - Max Requests</span>
+          <Input
+            type="number"
+            min={10}
+            max={10000}
+            defaultValue={securityStats?.rateLimiting?.maxRequests || 100}
+            onBlur={async (e) => {
+              const maxRequests = parseInt(e.target.value, 10);
+              if (Number.isNaN(maxRequests)) return;
+              try {
+                const res = await updateSessionSettings(() => authService.api.put('/security/settings/rate-limit', { max: maxRequests }));
+                const payload = res?.data || res;
+                if (payload?.success) {
+                  toast.success('Rate limit max updated');
+                  setSecurityStats((prev) => ({ ...prev, rateLimiting: { ...prev.rateLimiting, maxRequests: payload.data.max } }));
+                } else {
+                  toast.error(payload?.message || 'Failed to update');
+                }
+              } catch (err) {
+                toast.error('Failed to update');
+              }
+            }}
+          />
+        </div>
       </div>
     </Card>
   );

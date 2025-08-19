@@ -14,9 +14,7 @@ const LoanApplicationsPage = () => {
     search: "",
   });
   const [selectedLoan, setSelectedLoan] = useState(null);
-  const [showApprovalModal, setShowApprovalModal] = useState(false);
-  const [showRejectionModal, setShowRejectionModal] = useState(false);
-  const [rejectionReason, setRejectionReason] = useState("");
+  // Simplify UX: inline actions without modals
 
   const { execute: fetchLoanApplications } = useApiOperation("fetch loan applications");
   const { execute: updateLoanStatus } = useApiOperation("update loan status");
@@ -299,10 +297,7 @@ const LoanApplicationsPage = () => {
             loan.id === loanId ? { ...loan, status: newStatus } : loan
           )
         );
-        setShowApprovalModal(false);
-        setShowRejectionModal(false);
-        setSelectedLoan(null);
-        setRejectionReason("");
+        // Inline updates; no modals to close
       } else {
         toast.error(message || "Failed to update loan status");
       }
@@ -484,20 +479,14 @@ const LoanApplicationsPage = () => {
               {loan.status === "pending" && (
                 <div className={styles.loanActions}>
                   <Button
-                    onClick={() => {
-                      setSelectedLoan(loan);
-                      setShowApprovalModal(true);
-                    }}
+                    onClick={() => handleStatusUpdate(loan.id, 'approved')}
                     variant="success"
                     size="small"
                   >
                     Approve
                   </Button>
                   <Button
-                    onClick={() => {
-                      setSelectedLoan(loan);
-                      setShowRejectionModal(true);
-                    }}
+                    onClick={() => handleStatusUpdate(loan.id, 'rejected')}
                     variant="danger"
                     size="small"
                   >
