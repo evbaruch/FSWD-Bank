@@ -138,6 +138,7 @@
 
 .userInfo {
   flex: 1;
+  min-width: 0; /* allow text truncation in flex */
 }
 
 .userInfo h3 {
@@ -151,6 +152,9 @@
   font-size: 0.875rem;
   color: #718096;
   margin: 0 0 0.5rem 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .userBadges {
@@ -455,4 +459,14 @@
   box-shadow: 0 4px 6px rgba(0,0,0,0.05);
   border: 1px solid #e2e8f0;
   overflow: hidden; /* ensures no content slips out */
+}
+
+/* Keep buttons visible even with long text */
+.userHeader {
+  align-items: stretch;
+}
+.userInfo h3 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

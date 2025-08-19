@@ -256,21 +256,12 @@ router.get("/", authorizeRoles("admin", "manager"), async (req, res) => {
     ORDER BY l.created_at DESC
     `);
 
-    const response = {
-      success: true,
-      data: rows,
-    };
-
-    // Encrypt response if requested
+    // Always return consistent structure
+    const payload = { success: true, data: rows };
     if (req.headers["x-encrypted"] === "true") {
-      console.log("[LOANS-ADMIN] Encrypting response");
-      const encryptedResponse = encryptionService.encrypt(response);
-      response.encrypted = true;
-      response.data = encryptedResponse;
-      console.log("[LOANS-ADMIN] Response encrypted");
+      return res.json(encryptionService.encrypt(payload));
     }
-
-    res.json(response);
+    res.json(payload);
   } catch (error) {
     console.error("Error fetching loan applications:", error);
     const errorResponse = {
@@ -394,9 +385,7 @@ router.put(
 
       // Encrypt response if requested
       if (req.headers["x-encrypted"] === "true") {
-        console.log("[LOAN-STATUS] Encrypting response");
-        responseData.encrypted = true;
-        console.log("[LOAN-STATUS] Response encrypted");
+        return res.json(encryptionService.encrypt(responseData));
       }
 
       res.json(responseData);

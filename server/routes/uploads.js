@@ -100,12 +100,32 @@ router.post(
           );
       }
 
-      // SHA-256 hash
+      // Read file buffer (plaintext from multer)
       const fileBuffer = await fs.readFile(req.file.path);
+
+      // SHA-256 hash of original file (pre-encryption)
       const fileHash = crypto
         .createHash("sha256")
         .update(fileBuffer)
         .digest("hex");
+
+      // Encrypt file at rest using AES-256-CBC with IV prepended to file contents
+      const iv = crypto.randomBytes(16);
+      const cipher = crypto.createCipheriv(
+        encryptionService.algorithm,
+        encryptionService.secretKey,
+        iv
+      );
+      const encryptedBuffer = Buffer.concat([
+        cipher.update(fileBuffer),
+        cipher.final(),
+      ]);
+
+      // Prepend IV to the encrypted payload so we can decrypt on download
+      const finalBuffer = Buffer.concat([iv, encryptedBuffer]);
+
+      // Overwrite the uploaded file with the encrypted content
+      await fs.writeFile(req.file.path, finalBuffer);
 
       const pool = getMySQLPool();
 
@@ -123,7 +143,7 @@ router.post(
           req.file.size,
           req.file.mimetype,
           fileHash,
-          false,
+          true,
         ]
       );
 
@@ -224,7 +244,37 @@ router.get(
           .json({ success: false, error: "File not found on server" });
       }
 
-      res.download(document.file_path, document.file_name);
+      // Read encrypted file from disk
+      const encryptedFile = await fs.readFile(document.file_path);
+
+      if (!encryptedFile || encryptedFile.length < 17) {
+        return res
+          .status(500)
+          .json({ success: false, error: "Corrupted file" });
+      }
+
+      // Extract IV (first 16 bytes) and ciphertext
+      const iv = encryptedFile.subarray(0, 16);
+      const ciphertext = encryptedFile.subarray(16);
+
+      // Decrypt using same algorithm/key as encryptionService
+      const decipher = crypto.createDecipheriv(
+        encryptionService.algorithm,
+        encryptionService.secretKey,
+        iv
+      );
+      const decrypted = Buffer.concat([
+        decipher.update(ciphertext),
+        decipher.final(),
+      ]);
+
+      // Stream decrypted file to client with original filename and mimetype
+      res.setHeader("Content-Type", document.mime_type);
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="${document.file_name.replace(/"/g, '')}"`
+      );
+      res.send(decrypted);
     } catch (error) {
       console.error("Error downloading document:", error);
       res

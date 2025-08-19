@@ -58,7 +58,9 @@ const LoansPage = () => {
     try {
       setIsLoading(true);
       const data = await apiService.loans.getAll(filters);
-      setLoans(data.data || []);
+      // data may be { success, data } or already decrypted payload
+      const list = Array.isArray(data?.data) ? data.data : (Array.isArray(data) ? data : []);
+      setLoans(list);
     } catch (error) {
       console.error('Error fetching loans:', error);
       setError('Failed to load loans');
