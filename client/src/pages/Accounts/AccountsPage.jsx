@@ -1,446 +1,376 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useForm } from "react-hook-form";
-import {
-  CreditCard,
-  Plus,
-  Eye,
+import React, { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { 
+  CreditCard, 
+  Plus, 
+  DollarSign, 
+  TrendingUp, 
+  Eye, 
   EyeOff,
-  DollarSign,
-  TrendingUp,
   Download,
-  Settings,
-  Search,
-  RefreshCw,
-  Shield,
-  Activity,
-} from "lucide-react";
-import { Button, Input, Card, ErrorDisplay } from "../../components/common";
-import { apiService } from "../../services/apiService";
-import { useApiOperation } from "../../hooks/useApiOperation";
-import styles from "./AccountsPage.module.css";
+  Copy,
+  MoreVertical,
+  AlertCircle
+} from 'lucide-react';
+import { Button, Input, Card } from '../../components/common';
+import { useAuth } from '../../context/AuthContext';
+import { apiService } from '../../services/apiService';
+import { toast } from 'react-hot-toast';
+import styles from './AccountsPage.module.css';
 
 const AccountsPage = () => {
+  const { user } = useAuth();
   const [accounts, setAccounts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [showBalances, setShowBalances] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterType, setFilterType] = useState("all");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [hiddenBalances, setHiddenBalances] = useState({});
 
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors }
   } = useForm();
 
-  const loadAccounts = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await apiService.get("/accounts");
-      setAccounts(response.data?.data || []);
-    } catch (error) {
-      console.error("Error loading accounts:", error);
-      setError("Failed to load accounts");
-    } finally {
-      setLoading(false);
-    }
+  useEffect(() => {
+    fetchAccounts();
   }, []);
 
-  useEffect(() => {
-    loadAccounts();
-  }, [loadAccounts]);
-
-  const { execute: createAccount, isLoading: isCreating } =
-    useApiOperation("Create Account");
+  const fetchAccounts = async () => {
+    try {
+      setIsLoading(true);
+      const data = await apiService.accounts.getAll();
+      const accountsList = Array.isArray(data?.data) ? data.data : (Array.isArray(data) ? data : []);
+      setAccounts(accountsList);
+    } catch (error) {
+      console.error('Error fetching accounts:', error);
+      setError('Failed to load accounts');
+      toast.error('Failed to load accounts');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const onSubmit = async (data) => {
-    createAccount(
-      async () => {
-        console.log("Form data before encrypting/sending:", data);
-        const result = await apiService.accounts.create(data);
-        setAccounts((prev) => [result.data, ...prev]);
-        setShowCreateForm(false);
-        reset();
-      },
-      {
-        onError: (error, errorType) => {
-          console.error("Account creation error:", error);
-        },
-      }
-    );
-  };
-
-  const getAccountIcon = (accountType) => {
-    switch (accountType) {
-      case "checking":
-        return <CreditCard className={styles.accountIcon} />;
-      case "savings":
-        return <TrendingUp className={styles.accountIcon} />;
-      case "business":
-        return <DollarSign className={styles.accountIcon} />;
-      default:
-        return <CreditCard className={styles.accountIcon} />;
+    try {
+      setIsCreating(true);
+      const result = await apiService.accounts.create(data);
+      setAccounts(prev => [result.data, ...prev]);
+      setShowCreateForm(false);
+      reset();
+      toast.success('Account created successfully');
+    } catch (error) {
+      console.error('Error creating account:', error);
+      const errorMessage = error.response?.data?.error || error.message || 'Failed to create account';
+      toast.error(errorMessage);
+    } finally {
+      setIsCreating(false);
     }
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "active":
-        return styles.statusActive;
-      case "inactive":
-        return styles.statusInactive;
-      case "frozen":
-        return styles.statusFrozen;
-      default:
-        return styles.statusInactive;
-    }
+  const toggleBalanceVisibility = (accountId) => {
+    setHiddenBalances(prev => ({
+      ...prev,
+      [accountId]: !prev[accountId]
+    }));
   };
 
-  const formatCurrency = (amount, currency = "USD") => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currency,
+  const copyAccountNumber = (accountNumber) => {
+    navigator.clipboard.writeText(accountNumber);
+    toast.success('Account number copied to clipboard');
+  };
+
+  const formatCurrency = (amount, currency = 'USD') => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currency
     }).format(amount);
   };
 
-  const formatAccountNumber = (accountNumber) => {
-    return `****${accountNumber.slice(-4)}`;
+  const getAccountIcon = (type) => {
+    switch (type) {
+      case 'checking':
+        return <CreditCard className={styles.accountIcon} />;
+      case 'savings':
+        return <DollarSign className={styles.accountIcon} />;
+      case 'business':
+        return <TrendingUp className={styles.accountIcon} />;
+      default:
+        return <CreditCard className={styles.accountIcon} />;
+    }
   };
 
-  const filteredAccounts = accounts.filter((account) => {
-    const matchesSearch =
-      account.accountType.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      account.accountNumber.includes(searchTerm);
-    const matchesFilter =
-      filterType === "all" || account.accountType === filterType;
-    return matchesSearch && matchesFilter;
-  });
+  const getAccountTypeColor = (type) => {
+    switch (type) {
+      case 'checking':
+        return styles.checking;
+      case 'savings':
+        return styles.savings;
+      case 'business':
+        return styles.business;
+      default:
+        return styles.checking;
+    }
+  };
 
-  const totalBalance = accounts.reduce(
-    (sum, account) => sum + parseFloat(account.balance || 0),
-    0
+  // Extracted JSX components
+  const loadingView = (
+    <div className={styles.loadingContainer}>
+      <div className={styles.loadingSpinner}></div>
+      <p>Loading accounts...</p>
+    </div>
   );
 
-  if (loading) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.loadingState}>
-          <div className={styles.loadingSpinner}></div>
-          <p>Loading your accounts...</p>
+  const headerSection = (
+    <div className={styles.header}>
+      <div className={styles.headerContent}>
+        <h1 className={styles.title}>Accounts</h1>
+        <p className={styles.subtitle}>
+          Manage your bank accounts and view balances
+        </p>
+      </div>
+      
+      <div className={styles.headerActions}>
+        <Button
+          variant="primary"
+          onClick={() => setShowCreateForm(true)}
+          className={styles.createButton}
+        >
+          <Plus className={styles.icon} />
+          Open New Account
+        </Button>
+      </div>
+    </div>
+  );
+
+  const errorSection = error && (
+    <div className={styles.errorContainer}>
+      <AlertCircle className={styles.errorIcon} />
+      <span className={styles.errorText}>{error}</span>
+    </div>
+  );
+
+  const accountCard = (account) => (
+    <Card key={account.id} className={styles.accountCard}>
+      <div className={styles.accountHeader}>
+        <div className={styles.accountInfo}>
+          {getAccountIcon(account.type)}
+          <div className={styles.accountDetails}>
+            <h3 className={styles.accountName}>
+              {account.name || `${account.type.charAt(0).toUpperCase() + account.type.slice(1)} Account`}
+            </h3>
+            <p className={styles.accountNumber}>
+              ****{account.accountNumber.slice(-4)}
+            </p>
+          </div>
+        </div>
+        
+        <div className={styles.accountActions}>
+          <Button
+            variant="ghost"
+            size="small"
+            onClick={() => toggleBalanceVisibility(account.id)}
+            className={styles.balanceToggle}
+          >
+            {hiddenBalances[account.id] ? <EyeOff className={styles.icon} /> : <Eye className={styles.icon} />}
+          </Button>
+          
+          <Button
+            variant="ghost"
+            size="small"
+            onClick={() => copyAccountNumber(account.accountNumber)}
+            className={styles.copyButton}
+          >
+            <Copy className={styles.icon} />
+          </Button>
+          
+          <Button
+            variant="ghost"
+            size="small"
+            className={styles.moreButton}
+          >
+            <MoreVertical className={styles.icon} />
+          </Button>
         </div>
       </div>
-    );
+      
+      <div className={styles.accountBalance}>
+        <div className={styles.balanceInfo}>
+          <span className={styles.balanceLabel}>Available Balance</span>
+          <span className={styles.balanceAmount}>
+            {hiddenBalances[account.id] 
+              ? '••••••' 
+              : formatCurrency(account.balance, account.currency)
+            }
+          </span>
+        </div>
+        
+        <div className={styles.accountType}>
+          <span className={`${styles.typeBadge} ${getAccountTypeColor(account.type)}`}>
+            {account.type}
+          </span>
+        </div>
+      </div>
+      
+      <div className={styles.accountFooter}>
+        <div className={styles.accountStats}>
+          <div className={styles.statItem}>
+            <span className={styles.statLabel}>Status</span>
+            <span className={styles.statValue}>{account.status}</span>
+          </div>
+          <div className={styles.statItem}>
+            <span className={styles.statLabel}>Currency</span>
+            <span className={styles.statValue}>{account.currency}</span>
+          </div>
+        </div>
+        
+        <div className={styles.accountActions}>
+          <Button
+            variant="outline"
+            size="small"
+            className={styles.actionButton}
+          >
+            <Download className={styles.icon} />
+            Statement
+          </Button>
+        </div>
+      </div>
+    </Card>
+  );
+
+  const accountsGridSection = (
+    <div className={styles.accountsGrid}>
+      {accounts.map(accountCard)}
+    </div>
+  );
+
+  const emptyStateSection = (
+    <div className={styles.emptyState}>
+      <CreditCard className={styles.emptyIcon} />
+      <h3>No accounts found</h3>
+      <p>Open your first account to get started</p>
+      <Button
+        variant="primary"
+        onClick={() => setShowCreateForm(true)}
+      >
+        <Plus className={styles.icon} />
+        Open Account
+      </Button>
+    </div>
+  );
+
+  const accountsSection = (
+    <div className={styles.accountsContainer}>
+      {accounts.length === 0 ? emptyStateSection : accountsGridSection}
+    </div>
+  );
+
+  const createAccountForm = showCreateForm && (
+    <div className={styles.modalOverlay}>
+      <Card className={styles.modal}>
+        <div className={styles.modalHeader}>
+          <h2 className={styles.modalTitle}>Open New Account</h2>
+          <Button
+            onClick={() => setShowCreateForm(false)}
+            className={styles.closeButton}
+          >
+            ×
+          </Button>
+        </div>
+
+        <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>Account Type</label>
+            <select
+              {...register("accountType", {
+                required: "Account type is required",
+              })}
+              className={styles.formSelect}
+            >
+              <option value="">Select account type</option>
+              <option value="checking">Checking Account</option>
+              <option value="savings">Savings Account</option>
+              <option value="business">Business Account</option>
+            </select>
+            {errors.accountType && (
+              <p className={styles.errorText}>
+                {errors.accountType.message}
+              </p>
+            )}
+          </div>
+
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>Currency</label>
+            <select
+              {...register("currency", {
+                required: "Currency is required",
+              })}
+              className={styles.formSelect}
+            >
+              <option value="">Select currency</option>
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+              <option value="GBP">GBP</option>
+            </select>
+            {errors.currency && (
+              <p className={styles.errorText}>{errors.currency.message}</p>
+            )}
+          </div>
+
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>Initial Deposit</label>
+            <Input
+              type="number"
+              placeholder="Enter amount"
+              {...register("initialDeposit", {
+                required: "Initial deposit is required",
+                min: {
+                  value: 0,
+                  message: "Amount must be positive or zero",
+                },
+                valueAsNumber: true,
+              })}
+            />
+            {errors.initialDeposit && (
+              <p className={styles.errorText}>
+                {errors.initialDeposit.message}
+              </p>
+            )}
+          </div>
+
+          <div className={styles.formActions}>
+            <Button
+              type="button"
+              onClick={() => setShowCreateForm(false)}
+              className={styles.cancelButton}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={isCreating}
+              className={styles.submitButton}
+            >
+              {isCreating ? "Creating..." : "Create Account"}
+            </Button>
+          </div>
+        </form>
+      </Card>
+    </div>
+  );
+
+  if (isLoading) {
+    return <div className={styles.container}>{loadingView}</div>;
   }
 
   return (
     <div className={styles.container}>
-      {/* Error Display */}
-      <ErrorDisplay
-        error={error}
-        onRetry={loadAccounts}
-        onDismiss={() => setError(null)}
-        retryCount={0} // retryCount is not defined in the new_code, so it's set to 0
-        context="Accounts data loading"
-      />
-
-      {/* Header Section */}
-      <div className={styles.header}>
-        <div className={styles.headerContent}>
-          <div className={styles.headerLeft}>
-            <h1 className={styles.pageTitle}>Your Accounts</h1>
-            <p className={styles.pageSubtitle}>
-              Manage your accounts and view balances
-            </p>
-          </div>
-          <div className={styles.headerRight}>
-            <Button
-              onClick={() => setShowCreateForm(true)}
-              className={styles.createButton}
-            >
-              <Plus className={styles.buttonIcon} />
-              Open New Account
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* Summary Cards */}
-      <div className={styles.summaryGrid}>
-        <Card className={styles.summaryCard}>
-          <div className={styles.summaryContent}>
-            <div className={styles.summaryIcon}>
-              <DollarSign className={styles.summaryIconInner} />
-            </div>
-            <div className={styles.summaryInfo}>
-              <p className={styles.summaryLabel}>Total Balance</p>
-              <p className={styles.summaryValue}>
-                {formatCurrency(totalBalance)}
-              </p>
-            </div>
-          </div>
-        </Card>
-
-        <Card className={styles.summaryCard}>
-          <div className={styles.summaryContent}>
-            <div className={styles.summaryIcon}>
-              <CreditCard className={styles.summaryIconInner} />
-            </div>
-            <div className={styles.summaryInfo}>
-              <p className={styles.summaryLabel}>Active Accounts</p>
-              <p className={styles.summaryValue}>{accounts.length}</p>
-            </div>
-          </div>
-        </Card>
-
-        <Card className={styles.summaryCard}>
-          <div className={styles.summaryContent}>
-            <div className={styles.summaryIcon}>
-              <Activity className={styles.summaryIconInner} />
-            </div>
-            <div className={styles.summaryInfo}>
-              <p className={styles.summaryLabel}>This Month</p>
-              <p className={styles.summaryValue}>
-                {formatCurrency(totalBalance * 0.15)}
-              </p>
-            </div>
-          </div>
-        </Card>
-
-        <Card className={styles.summaryCard}>
-          <div className={styles.summaryContent}>
-            <div className={styles.summaryIcon}>
-              <Shield className={styles.summaryIconInner} />
-            </div>
-            <div className={styles.summaryInfo}>
-              <p className={styles.summaryLabel}>Security Score</p>
-              <p className={styles.summaryValue}>98%</p>
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      {/* Filters and Search */}
-      <Card className={styles.filtersCard}>
-        <div className={styles.filtersContent}>
-          <div className={styles.searchSection}>
-            <div className={styles.searchWrapper}>
-              <Search className={styles.searchIcon} />
-              <input
-                type="text"
-                placeholder="Search accounts..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className={styles.searchInput}
-              />
-            </div>
-          </div>
-
-          <div className={styles.filterSection}>
-            <select
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
-              className={styles.filterSelect}
-            >
-              <option value="all">All Accounts</option>
-              <option value="checking">Checking</option>
-              <option value="savings">Savings</option>
-              <option value="business">Business</option>
-            </select>
-
-            <Button onClick={loadAccounts} className={styles.refreshButton}>
-              <RefreshCw className={styles.buttonIcon} />
-              Refresh
-            </Button>
-          </div>
-        </div>
-      </Card>
-
-      {/* Accounts Grid */}
-      <div className={styles.accountsGrid}>
-        {filteredAccounts.map((account) => (
-          <Card key={account.id} className={styles.accountCard}>
-            <div className={styles.accountHeader}>
-              <div className={styles.accountInfo}>
-                <div className={styles.accountIconWrapper}>
-                  {getAccountIcon(account.accountType)}
-                </div>
-                <div className={styles.accountDetails}>
-                  <h3 className={styles.accountName}>
-                    {account.accountType} Account
-                  </h3>
-                  <p className={styles.accountNumber}>
-                    {formatAccountNumber(account.accountNumber)}
-                  </p>
-                </div>
-              </div>
-              <div className={styles.accountStatus}>
-                <span
-                  className={`${styles.statusBadge} ${getStatusColor(account.status)}`}
-                >
-                  {account.status}
-                </span>
-              </div>
-            </div>
-
-            <div className={styles.accountBalance}>
-              <div className={styles.balanceInfo}>
-                <p className={styles.balanceLabel}>Available Balance</p>
-                <p className={styles.balanceAmount}>
-                  {showBalances ? formatCurrency(account.balance) : "••••••"}
-                </p>
-              </div>
-              <Button
-                onClick={() => setShowBalances(!showBalances)}
-                className={styles.toggleButton}
-              >
-                {showBalances ? (
-                  <EyeOff className={styles.buttonIcon} />
-                ) : (
-                  <Eye className={styles.buttonIcon} />
-                )}
-              </Button>
-            </div>
-
-            <div className={styles.accountActions}>
-              <Button className={styles.actionButton}>
-                <Activity className={styles.buttonIcon} />
-                View Activity
-              </Button>
-              <Button className={styles.actionButton}>
-                <Download className={styles.buttonIcon} />
-                Statement
-              </Button>
-              <Button className={styles.actionButton}>
-                <Settings className={styles.buttonIcon} />
-                Settings
-              </Button>
-            </div>
-          </Card>
-        ))}
-
-        {filteredAccounts.length === 0 && (
-          <Card className={styles.emptyCard}>
-            <div className={styles.emptyState}>
-              <CreditCard className={styles.emptyIcon} />
-              <h3 className={styles.emptyTitle}>No accounts found</h3>
-              <p className={styles.emptyDescription}>
-                {searchTerm || filterType !== "all"
-                  ? "Try adjusting your search or filters"
-                  : "You don't have any accounts yet. Open your first account to get started."}
-              </p>
-              <Button
-                onClick={() => setShowCreateForm(true)}
-                className={styles.emptyButton}
-              >
-                <Plus className={styles.buttonIcon} />
-                Open Your First Account
-              </Button>
-            </div>
-          </Card>
-        )}
-      </div>
-
-      {/* Create Account Modal */}
-      {showCreateForm && (
-        <div className={styles.modalOverlay}>
-          <Card className={styles.modal}>
-            <div className={styles.modalHeader}>
-              <h2 className={styles.modalTitle}>Open New Account</h2>
-              <Button
-                onClick={() => setShowCreateForm(false)}
-                className={styles.closeButton}
-              >
-                ×
-              </Button>
-            </div>
-
-            <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-              {/* Account Type */}
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Account Type</label>
-                <select
-                  {...register("accountType", {
-                    required: "Account type is required",
-                  })}
-                  className={styles.formSelect}
-                >
-                  <option value="">Select account type</option>
-                  <option value="checking">Checking Account</option>
-                  <option value="savings">Savings Account</option>
-                  <option value="business">Business Account</option>
-                </select>
-                {errors.accountType && (
-                  <p className={styles.errorText}>
-                    {errors.accountType.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Currency */}
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Currency</label>
-                <select
-                  {...register("currency", {
-                    required: "Currency is required",
-                  })}
-                  className={styles.formSelect}
-                >
-                  <option value="">Select currency</option>
-                  <option value="USD">USD</option>
-                  <option value="EUR">EUR</option>
-                  <option value="GBP">GBP</option>
-                </select>
-                {errors.currency && (
-                  <p className={styles.errorText}>{errors.currency.message}</p>
-                )}
-              </div>
-
-              {/* Initial Deposit */}
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Initial Deposit</label>
-                <Input
-                  type="number"
-                  placeholder="Enter amount"
-                  {...register("initialDeposit", {
-                    required: "Initial deposit is required",
-                    min: {
-                      value: 0,
-                      message: "Amount must be positive or zero",
-                    },
-                    valueAsNumber: true, // ensures it's a number, not string
-                  })}
-                />
-                {errors.initialDeposit && (
-                  <p className={styles.errorText}>
-                    {errors.initialDeposit.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Form Actions */}
-              <div className={styles.formActions}>
-                <Button
-                  type="button"
-                  onClick={() => setShowCreateForm(false)}
-                  className={styles.cancelButton}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={isCreating}
-                  className={styles.submitButton}
-                >
-                  {isCreating ? "Creating..." : "Create Account"}
-                </Button>
-              </div>
-            </form>
-          </Card>
-        </div>
-      )}
+      {headerSection}
+      {errorSection}
+      {accountsSection}
+      {createAccountForm}
     </div>
   );
 };

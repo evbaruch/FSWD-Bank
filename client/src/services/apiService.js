@@ -163,6 +163,11 @@ export const apiService = {
     calculate: async (loanData) => {
       const response = await api.post('/loans/calculate', loanData);
       return response.data;
+    },
+
+    updateStatus: async (loanId, status, reason = '') => {
+      const response = await api.put(`/loans/${loanId}/status`, { status, reason });
+      return response.data;
     }
   },
 
