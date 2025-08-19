@@ -1,0 +1,358 @@
+.container {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin-bottom: 0.5rem;
+}
+
+.header p {
+  font-size: 1.1rem;
+  color: #718096;
+}
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 1rem;
+}
+
+.loadingSpinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e2e8f0;
+  border-top: 4px solid #3182ce;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.summaryCard {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  transition: transform 0.2s ease-in-out;
+}
+
+.summaryCard:hover {
+  transform: translateY(-2px);
+}
+
+.summaryContent {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+}
+
+.summaryIcon {
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.summaryInfo h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem 0;
+}
+
+.summaryInfo p {
+  font-size: 1rem;
+  margin: 0 0 0.25rem 0;
+  opacity: 0.9;
+}
+
+.summaryInfo small {
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+.mainGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.cardHeader h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin: 0;
+}
+
+.userList, .transactionList {
+  padding: 1rem;
+}
+
+.userItem, .transactionItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #f7fafc;
+  transition: background-color 0.2s ease;
+}
+
+.userItem:hover, .transactionItem:hover {
+  background-color: #f7fafc;
+}
+
+.userItem:last-child, .transactionItem:last-child {
+  border-bottom: none;
+}
+
+.userInfo, .transactionInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.userAvatar {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.userDetails h4, .transactionDetails h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin: 0 0 0.25rem 0;
+}
+
+.userDetails p, .transactionDetails p {
+  font-size: 0.875rem;
+  color: #718096;
+  margin: 0 0 0.25rem 0;
+}
+
+.transactionIcon {
+  width: 40px;
+  height: 40px;
+  background: #f7fafc;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4a5568;
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.statusBadge.success {
+  background-color: #c6f6d5;
+  color: #22543d;
+}
+
+.statusBadge.warning {
+  background-color: #fef5e7;
+  color: #744210;
+}
+
+.statusBadge.danger {
+  background-color: #fed7d7;
+  color: #742a2a;
+}
+
+.statusBadge.secondary {
+  background-color: #e2e8f0;
+  color: #4a5568;
+}
+
+.unreadBadge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: #3182ce;
+  color: white;
+  margin-top: 0.25rem;
+}
+
+.typeBadge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: #e2e8f0;
+  color: #4a5568;
+  margin-left: 0.5rem;
+}
+
+.userMeta, .transactionAmount {
+  text-align: right;
+}
+
+.userMeta small, .transactionAmount small {
+  display: block;
+  font-size: 0.75rem;
+  color: #718096;
+  margin-top: 0.25rem;
+}
+
+.transactionAmount span {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.transactionAmount .positive {
+  color: #38a169;
+}
+
+.transactionAmount .negative {
+  color: #e53e3e;
+}
+
+.quickActions {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+}
+
+.quickActions h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin: 0 0 1.5rem 0;
+}
+
+.actionGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.actionButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  height: auto;
+  min-height: 100px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  background: white;
+  color: #4a5568;
+}
+
+.actionButton:hover {
+  border-color: #667eea;
+  background: #f7fafc;
+  color: #667eea;
+  transform: translateY(-2px);
+}
+
+.actionButton i {
+  font-size: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .header h1 {
+    font-size: 2rem;
+  }
+
+  .summaryGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .mainGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .actionGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .userItem, .transactionItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .userMeta, .transactionAmount {
+    text-align: left;
+    align-self: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  .actionGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .summaryContent {
+    flex-direction: column;
+    text-align: center;
+  }
+}

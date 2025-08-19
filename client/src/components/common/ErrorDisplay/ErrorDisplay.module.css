@@ -1,0 +1,226 @@
+.container {
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+  border: 1px solid;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.content {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.iconContainer {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+}
+
+.messageContainer {
+  flex: 1;
+  min-width: 0;
+}
+
+.message {
+  margin: 0 0 4px 0;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.actionText {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.8;
+  line-height: 1.3;
+}
+
+.context {
+  margin: 8px 0 0 0;
+  font-size: 12px;
+  opacity: 0.6;
+  font-family: monospace;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.retryButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid;
+  border-radius: 4px;
+  background: transparent;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.retryButton:hover:not(:disabled) {
+  opacity: 0.8;
+}
+
+.retryButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.retryIcon {
+  width: 14px;
+  height: 14px;
+}
+
+.dismissButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dismissButton:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.dismissIcon {
+  width: 16px;
+  height: 16px;
+}
+
+.retryInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.retrySpinner {
+  width: 16px;
+  height: 16px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Error severity styles */
+.error {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+.error .icon {
+  color: #dc2626;
+}
+
+.error .retryButton {
+  border-color: #dc2626;
+  color: #dc2626;
+}
+
+.error .retryButton:hover:not(:disabled) {
+  background: #dc2626;
+  color: white;
+}
+
+.critical {
+  background: #fef2f2;
+  border-color: #dc2626;
+  color: #dc2626;
+}
+
+.critical .icon {
+  color: #dc2626;
+}
+
+.warning {
+  background: #fffbeb;
+  border-color: #fed7aa;
+  color: #d97706;
+}
+
+.warning .icon {
+  color: #d97706;
+}
+
+.warning .retryButton {
+  border-color: #d97706;
+  color: #d97706;
+}
+
+.warning .retryButton:hover:not(:disabled) {
+  background: #d97706;
+  color: white;
+}
+
+.info {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #2563eb;
+}
+
+.info .icon {
+  color: #2563eb;
+}
+
+.info .retryButton {
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+.info .retryButton:hover:not(:disabled) {
+  background: #2563eb;
+  color: white;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .container {
+    padding: 12px;
+    margin: 12px 0;
+  }
+  
+  .content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .actions {
+    align-self: stretch;
+    justify-content: flex-end;
+  }
+  
+  .retryButton {
+    flex: 1;
+    justify-content: center;
+  }
+} 

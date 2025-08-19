@@ -1,0 +1,338 @@
+.container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.newTransactionButton {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.newTransactionButton:hover {
+  background: #2563eb;
+}
+
+.filters {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.filtersTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.filtersForm {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  align-items: end;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-weight: 500;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.input {
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.select {
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  background: white;
+}
+
+.filterButton {
+  background: #6b7280;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.filterButton:hover {
+  background: #4b5563;
+}
+
+.transactionsTable {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.tableHeader {
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1rem 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.tableRow {
+  padding: 1rem 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  border-bottom: 1px solid #f3f4f6;
+  transition: background-color 0.2s;
+}
+
+.tableRow:hover {
+  background: #f9fafb;
+}
+
+.tableRow:last-child {
+  border-bottom: none;
+}
+
+.transactionType {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+}
+
+.typeIcon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 0.75rem;
+}
+
+.typeDeposit {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.typeWithdrawal {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.typeTransfer {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.typePayment {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.typeFee {
+  background: #f3e8ff;
+  color: #7c3aed;
+}
+
+.typeInterest {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.amount {
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+
+.amountPositive {
+  color: #059669;
+}
+
+.amountNegative {
+  color: #dc2626;
+}
+
+.description {
+  color: #374151;
+  word-break: break-word;
+}
+
+.date {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.statusPending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.statusCompleted {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.statusFailed {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.statusCancelled {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.actionButton {
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  background: white;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.actionButton:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.viewButton {
+  color: #3b82f6;
+}
+
+.downloadButton {
+  color: #059669;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+}
+
+.error {
+  text-align: center;
+  padding: 2rem;
+  color: #dc2626;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 3rem;
+  color: #6b7280;
+}
+
+.emptyStateIcon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.paginationButton {
+  padding: 0.5rem 1rem;
+  border: 1px solid #d1d5db;
+  background: white;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.875rem;
+}
+
+.paginationButton:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.paginationButton:disabled {
+  background: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.paginationButton.active {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.pageInfo {
+  color: #6b7280;
+  font-size: 0.875rem;
+} 

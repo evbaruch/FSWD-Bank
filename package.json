@@ -1,0 +1,59 @@
+{
+  "name": "fswd-bank",
+  "version": "1.0.0",
+  "description": "A comprehensive bank website with multiple user types, authentication, and various banking operations",
+  "main": "server/index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cross-env PORT=5001 nodemon server/index.js",
+    "client": "cd client && npm start",
+    "build": "cd client && npm run build",
+    "install-all": "npm install && cd client && npm install",
+    "setup-db": "node scripts/setup-databases.js"
+  },
+  "keywords": [
+    "bank",
+    "finance",
+    "react",
+    "nodejs",
+    "mysql",
+    "mongodb"
+  ],
+  "author": "FSWD Bank Team",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.2",
+    "bcryptjs": "^2.4.3",
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
+    "express-validator": "^7.0.1",
+    "helmet": "^7.1.0",
+    "ioredis": "^5.6.1",
+    "jsonwebtoken": "^9.0.2",
+    "moment": "^2.29.4",
+    "mongoose": "^8.0.3",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.6.5",
+    "nodemailer": "^6.9.7",
+    "openai": "^4.0.0",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
+    "qrcode": "^1.5.4",
+    "sharp": "^0.33.1",
+    "socket.io": "^4.7.4",
+    "speakeasy": "^2.0.0",
+    "stripe": "^14.9.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "cross-env": "^10.0.0",
+    "nodemon": "^3.0.2"
+  }
+}

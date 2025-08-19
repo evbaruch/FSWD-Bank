@@ -1,0 +1,411 @@
+.container {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin-bottom: 0.5rem;
+}
+
+.header p {
+  font-size: 1.1rem;
+  color: #718096;
+}
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 1rem;
+}
+
+.loadingSpinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e2e8f0;
+  border-top: 4px solid #3182ce;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.filterCard {
+  margin-bottom: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+}
+
+.filterContent {
+  padding: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.dateInputs {
+  display: flex;
+  gap: 1rem;
+  flex: 1;
+  flex-wrap: wrap;
+}
+
+.dateInput {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.dateInput label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.datePicker {
+  padding: 0.75rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.datePicker:focus {
+  outline: none;
+  border-color: #3182ce;
+  box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+}
+
+.refreshButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.summaryCard {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  transition: transform 0.2s ease-in-out;
+}
+
+.summaryCard:hover {
+  transform: translateY(-2px);
+}
+
+.summaryContent {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+}
+
+.summaryIcon {
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.summaryInfo h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem 0;
+}
+
+.summaryInfo p {
+  font-size: 1rem;
+  margin: 0 0 0.5rem 0;
+  opacity: 0.9;
+}
+
+.summaryBreakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.summaryBreakdown small {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.reportCard {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  margin-bottom: 2rem;
+}
+
+.reportHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.reportHeader h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin: 0;
+}
+
+.reportActions {
+  display: flex;
+  gap: 1rem;
+}
+
+.exportButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tableContainer {
+  overflow-x: auto;
+  padding: 1rem;
+}
+
+.reportTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.reportTable th {
+  background: #f7fafc;
+  padding: 1rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  color: #4a5568;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.reportTable td {
+  padding: 1rem 0.75rem;
+  border-bottom: 1px solid #f7fafc;
+  color: #2d3748;
+}
+
+.reportTable tr:hover {
+  background: #f7fafc;
+}
+
+.transactionType {
+  font-weight: 500;
+  color: #4a5568;
+  text-transform: capitalize;
+}
+
+.positive {
+  color: #38a169;
+  font-weight: 600;
+}
+
+.negative {
+  color: #e53e3e;
+  font-weight: 600;
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.statusBadge.success {
+  background-color: #c6f6d5;
+  color: #22543d;
+}
+
+.statusBadge.warning {
+  background-color: #fef5e7;
+  color: #744210;
+}
+
+.statusBadge.danger {
+  background-color: #fed7d7;
+  color: #742a2a;
+}
+
+.statusBadge.secondary {
+  background-color: #e2e8f0;
+  color: #4a5568;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 3rem;
+  color: #718096;
+}
+
+.emptyState i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.emptyState h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.emptyState p {
+  margin: 0;
+}
+
+.additionalReports {
+  margin-top: 3rem;
+}
+
+.additionalReports h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin: 0 0 1.5rem 0;
+}
+
+.reportsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.reportOption {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.reportOption:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.reportOptionContent {
+  padding: 2rem;
+  text-align: center;
+}
+
+.reportOptionContent i {
+  font-size: 2.5rem;
+  color: #667eea;
+  margin-bottom: 1rem;
+}
+
+.reportOptionContent h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin: 0 0 0.5rem 0;
+}
+
+.reportOptionContent p {
+  color: #718096;
+  margin: 0 0 1.5rem 0;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .header h1 {
+    font-size: 2rem;
+  }
+
+  .filterContent {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .dateInputs {
+    flex-direction: column;
+  }
+
+  .summaryGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .reportHeader {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .reportActions {
+    justify-content: center;
+  }
+
+  .tableContainer {
+    padding: 0.5rem;
+  }
+
+  .reportTable {
+    font-size: 0.75rem;
+  }
+
+  .reportTable th,
+  .reportTable td {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .reportsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .summaryContent {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .reportTable {
+    font-size: 0.7rem;
+  }
+
+  .reportTable th,
+  .reportTable td {
+    padding: 0.5rem 0.25rem;
+  }
+}

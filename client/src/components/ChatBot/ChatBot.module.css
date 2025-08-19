@@ -1,0 +1,215 @@
+.chatButton {
+  position: fixed;
+  right: 2rem;
+  bottom: 2rem; /* Return to bottom positioning */
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: var(--primary-600);
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  z-index: 1000;
+}
+
+.chatButton:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.chatContainer {
+  position: fixed;
+  width: 380px;
+  height: 500px;
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  cursor: move;
+  z-index: 9999;  /* Add this to ensure it's above everything */
+}
+
+.minimized {
+  height: auto;
+}
+
+.chatHeader {
+  padding: 1rem;
+  background: var(--primary-600);
+  color: white;
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+}
+
+.headerControls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.headerControls button {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.25rem;
+}
+
+.headerControls button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.chatMessages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative; /* Add this for scroll button positioning */
+  scroll-behavior: smooth; /* Add smooth scrolling */
+}
+
+.message {
+  max-width: 80%;
+  padding: 0.75rem 1rem;
+  border-radius: 1rem;
+  line-height: 1.4;
+}
+
+.user {
+  background: var(--primary-50);
+  color: var(--primary-900);
+  align-self: flex-end;
+  border-bottom-right-radius: 0.25rem;
+}
+
+.assistant {
+  background: var(--gray-100);
+  color: var(--gray-900);
+  align-self: flex-start;
+  border-bottom-left-radius: 0.25rem;
+}
+
+.chatInput {
+  padding: 1rem;
+  border-top: 1px solid var(--gray-200);
+  display: flex;
+  gap: 0.5rem;
+}
+
+.chatInput input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid var(--gray-200);
+  border-radius: 0.5rem;
+  outline: none;
+}
+
+.chatInput input:focus {
+  border-color: var(--primary-400);
+}
+
+.chatInput button {
+  padding: 0.75rem 1.5rem;
+  background: var(--primary-600);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.chatInput button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.scrollButton {
+  position: absolute;
+  bottom: 80px;  /* Position above input area */
+  right: 1rem;
+  background: var(--primary-600);
+  color: white;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 1;
+}
+
+.scrollButton.visible {
+  opacity: 1;
+}
+
+/* Add responsive positioning */
+@media (max-width: 768px) {
+  .chatButton {
+    right: 1rem;
+    bottom: 1rem;
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .chatContainer {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    transform: none !important; /* Prevent dragging on mobile */
+  }
+
+  .minimized {
+    height: auto;
+  }
+}
+
+/* Add safe area padding for modern mobile browsers */
+@supports (padding: max(0px)) {
+  .chatButton {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    right: max(1rem, env(safe-area-inset-right));
+  }
+}
